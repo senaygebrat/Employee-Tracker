@@ -8,10 +8,10 @@ const mysql = require('mysql2')
       // MySQL username,
       user: 'root',
       // MySQL password
-      password: '',
-      database: 'UNDECLARED_db'
+      password: 'spiral408',
+      database: 'job_db'
     },
-      console.log(`Connected to the UNDECLARED_db database.`)
+      console.log(`Connected to the job_db database.`)
   );
 
   function startPrompt(){
@@ -19,9 +19,14 @@ const mysql = require('mysql2')
       type: "list",
       message: "What would you like to do?",
       name: "choice",
-      choices: [" View all departments", "View all roles", "View all employees", "Add a department"
-      ]
+      choices: [" View all departments", "View all roles", "View all employees", 
+                "Add a department", "Add a role", "add an employee", "Update an employee role"]
     }
-
     ])
+    .then((response) => {
+      switch(input.choice) {
+        case "View all departments":
+          viewDepartments();
+      }
+    })
   }
