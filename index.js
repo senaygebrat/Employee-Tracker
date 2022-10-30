@@ -20,9 +20,6 @@ db.query('SELECT * FROM job_db.department', (err, res) => {
   db.end;
 })
 
-
-
-
   function startPrompt(){
     inquirer.prompt([{
       type: "list",
