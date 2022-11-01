@@ -3,6 +3,7 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2')
 const table = require('console.table')
 
+
   const db = mysql.createConnection(
     {
       host: 'localhost',
@@ -15,10 +16,6 @@ const table = require('console.table')
       // console.log(`Connected to the job_db database.`)
   );
 
-// db.query('SELECT * FROM job_db.department', (err, res) => {
-//   console.log(res)
-//   db.end;
-// })
 
   function startPrompt(){
     inquirer.prompt(
@@ -36,14 +33,6 @@ const table = require('console.table')
       )
     .then((response) => {
 
-      // const person = {
-      //   first: 'Senay',
-      //   last: 'Gebart',
-      //   fullName: function() {
-      //     return this.first + ' ' + this.last
-      //   }
-      // }
-
       switch(response.choice) {
        case "View All Departments":
           viewAllDepartments();
@@ -51,7 +40,7 @@ const table = require('console.table')
        case "View All Roles":
           viewAllRoles();
          break;
-       case "View all Employees":
+       case "View All Employees":
           viewAllEmp();
          break;
        case "Add an Employee":
@@ -115,6 +104,7 @@ function addEmp(){
  function viewAllDepartments(){
   db.query('SELECT * FROM department;', (err, res) => {
     console.table(res)
+    startPrompt();
   })
 }
 
@@ -122,17 +112,29 @@ function addEmp(){
  function viewAllRoles(){
   db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department ON role.department_id = department.id;', (err, res) => {
     console.table(res)
+    startPrompt();
   })
  }
 
 
  function viewAllEmp(){
-  // SELECT employee.first_name, employee.last_name FROM employee
- }
-
-
+  //
+  db.query("SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;", (err, res) => {
+    console.table(res)
+  startPrompt();
+  }) 
+}
 
  function addRole(){
+  let deptArr = [];
+  db.query('SELECT name FROM department;', (err, res) => {
+    if (err) throw err
+    res.map(function({ name }) {deptArr.push(name)})
+    roleQuestions();
+
+  })
+
+function roleQuestions(){
   inquirer.prompt(
     [
       {
@@ -142,28 +144,30 @@ function addEmp(){
       },
       {
         type: 'input',
-        name: 'firstName',
-        message: "What is the employee's first name?"
-      },
-      {
-        type: 'input',
-        name: 'lastName',
-        message: "What is the employee's last name?"
-      },
-      {
-        type: 'input',
         name: 'salary',
         message: "What is the salary?"
       },
       {
-        type: 'input',
+        type: 'list',
         name: 'department',
-        message: "What department?"
+        message: "What department?",
+        choices: deptArr
       }
     ]
   )
- }
+  .then((answer) => {
+    let deptId = [];
+    let id
+    db.query(`SELECT id FROM department WHERE name = "${answer.department}";`, (err, res) => {
+      if (err) throw err
+      res.map(function({ id }) {deptId.push(id)})
+      id = deptId.toString
 
+    })
+    db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${answer.role}", ${answer.salary}, ${id}`)
+  })
+}
+ }
 
  function updateEmpRole(){
   inquirer.prompt(
@@ -172,6 +176,10 @@ function addEmp(){
         type: 'list',
         message: 'Which employee would you like to update?',
         name: 'selectedEmployee'
+      },
+      {
+
+
       }
     ]
   )
@@ -179,6 +187,7 @@ function addEmp(){
     let savedValue = answer.selectedEmployee
     console.log(savedValue)
   })
+  startPrompt();
  }
 
 
@@ -192,7 +201,14 @@ function addEmp(){
       }
     ]
   )
-  .then
+  .then((answer) => {
+    db.query(`INSERT INTO department(name) VALUES ("${answer.newDepartment}")`,(err, res) => {
+      if (err) throw err
+      console.log(`added ${answer.newDepartment}`)
+      startPrompt();
+    }
+    )
+  })
  }
 
 
