@@ -12,13 +12,13 @@ const table = require('console.table')
       password: 'spiral408',
       database: 'job_db'
     },
-      console.log(`Connected to the job_db database.`)
+      // console.log(`Connected to the job_db database.`)
   );
 
-db.query('SELECT * FROM job_db.department', (err, res) => {
-  console.log(res)
-  db.end;
-})
+// db.query('SELECT * FROM job_db.department', (err, res) => {
+//   console.log(res)
+//   db.end;
+// })
 
   function startPrompt(){
     inquirer.prompt(
@@ -27,50 +27,47 @@ db.query('SELECT * FROM job_db.department', (err, res) => {
           type: "list",
           name: "choice",
           message: "What would you like to do?",
-          choices: ["View All Departments", "View all Employees", "View All Employees by Department", 
-                    "View All Employees by Manager", "Add an Employee", "Remove Employee", 
-                    "Update Employee Role", "Update Employee Manager", "Add Department", 
-                    "Remove Department", "Quit"
+          choices: ["View All Departments", "View All Roles", "View All Employees", 
+                    "Add an Employee", "Add Department", "Add A Role",
+                    "Update Employee Role", "Quit"
                    ]
         }
       ]
       )
     .then((response) => {
+
+      // const person = {
+      //   first: 'Senay',
+      //   last: 'Gebart',
+      //   fullName: function() {
+      //     return this.first + ' ' + this.last
+      //   }
+      // }
+
       switch(response.choice) {
-        case "View all Departments":
-          db.query('SELECT * FROM job_db.department', (err, res) => {
-            console.log(res)
-            db.end;
-        })
+        case "View All Departments":
+          viewAllDepartments();
+        break;
+      case "Vew All Roles":
+        viewAllRoles();
         break;
       case "View all Employees":
         viewAllEmp();
         break;
-      case "View all Employees by Department":
-        viewAllEmpByDept();
-        break;
-      case "View All Employees by Manager":
-        viewAllEmpByManager()
-        break;
       case "Add an Employee":
-        AddEmp();
+        addEmp();
         break;
-      case "Remove Employee":
-        removeEmp();
+      case "Add Department":
+        addDepartment();
+        break;
+      case "Add A Role":
+        addRole();
         break;
       case "Update Employee Role":
         updateEmpRole();
         break;
-      case "Update Employee Manager":
-        updateEmpManager();
-        break;
-      case "Add Department":
-        addDepartment()
-        break;
-      case "Remove Department":
-        removeDepartment();
-        break;
       case "Quit":
+        quit();
     }
 })}
 
@@ -111,27 +108,28 @@ function addEmp(){
    .then((response) => {
    })
  }
-
+ function viewAllDepartments(){
+  db.query('SELECT * FROM department;', (err, res) => {
+    console.table(res)
+  })
+}
+ function viewAllRoles(){
+  db.query('SELECT * FROM role;', (err, res) => {
+    console.table(res)
+  })
+ }
  function viewAllEmp(){
+  // SELECT employee.first_name, employee.last_name FROM employee
  }
-
- function viewAllEmpByDept(){
+ function addEmp(){
  }
-
- function viewAllEmpByManager(){
+ function addRole(){
  }
-
- function removeEmp(){
- }
-
  function updateEmpRole(){
  }
-
- function updateEmpManager(){
- }
-
  function addDepartment(){
  }
-
- function removeDepartment(){
+ function quit(){
  }
+
+ startPrompt();

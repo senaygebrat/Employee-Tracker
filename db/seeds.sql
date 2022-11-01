@@ -15,13 +15,13 @@ VALUES      ('Software Engineer', 120000, 1),
             ('Salesman', 80000, 4);
 
 
-INSERT INTO employee (first_name, last_name, role_id)
-VALUES      ('Senay', 'Gebrat', 1),
-            ('Bugs', 'Bunny', 2),
-            ('Daffy', 'Duck', 3),
-            ('Snow', 'White', 4),
-            ('Mickey', 'Mouse', 5),
-            ('Donald', 'Duck', 6), 
-            ('Minnie', 'Mouse', 7), 
-            ('Lola', 'Bunny', 8)
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES      ('Senay', 'Gebrat', 1, null),
+            ('Bugs', 'Bunny', 2, null),
+            ('Daffy', 'Duck', 3, null),
+            ('Snow', 'White', 4, null),
+            ('Mickey', 'Mouse', 5, 1),
+            ('Donald', 'Duck', 6, 2), 
+            ('Minnie', 'Mouse', 7, 3), 
+            ('Lola', 'Bunny', 8, 4)
 
