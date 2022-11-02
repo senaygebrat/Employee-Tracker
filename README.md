@@ -1,8 +1,11 @@
 # Employee-Tracker
 
+[Walkthrough Video](https://www.youtube.com/watch?v=IieaFmi9yl0)
+
 
 ## About Employee-Tracker
 Command line terminal that accepts user input and allows you interact with the employees, departments, and roles.
+![Terminal Preview](./assets/images/employee-tracker.gif)
 
 ## Code Snippet
 Adding the new role was a multi-step process. First we create a function addRole(), declare an empty array, and query our database.

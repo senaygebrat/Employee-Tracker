@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2')
 const table = require('console.table');
 
-
+//connection for our database
   const db = mysql.createConnection(
     {
       host: 'localhost',
@@ -31,7 +31,7 @@ const table = require('console.table');
       ]
     )
     .then((response) => {
-
+    //based on user choice, can switch to whatever they select. function will be executed
       switch(response.choice) {
        case "View All Departments":
           viewAllDepartments();
@@ -55,10 +55,12 @@ const table = require('console.table');
           updateEmpRole();
          break;
         case "Quit":
-          console.log("Please press Control + C to Quit. Goodbye!");
+          quit()
        }
     })
   }
+
+  //began to write function to add the employee, lines 64-107
 // function addEmp(){
 // //   let empArr = [];
 // //   db.query('SELECT name FROM department;', (err, res) => {
@@ -104,7 +106,7 @@ function empQuestions(){
    })
  }
 
-
+//function to view all departments
  function viewAllDepartments(){
   db.query('SELECT * FROM department;', (err, res) => {
     console.table(res)
@@ -112,7 +114,7 @@ function empQuestions(){
   })
 }
 
-
+//function to view all roles
  function viewAllRoles(){
   db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department ON role.department_id = department.id;', (err, res) => {
     console.table(res)
@@ -120,15 +122,16 @@ function empQuestions(){
   })
  }
 
-
+//function to view all employee
  function viewAllEmp(){
-  //
+  //long join statement
   db.query("SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;", (err, res) => {
     console.table(res)
   startPrompt();
   }) 
 }
 
+//function to add role for the database
  function addRole(){
   let deptArr = [];
   db.query('SELECT name FROM department;', (err, res) => {
@@ -195,6 +198,7 @@ function roleQuestions(){
  }
 
 
+ //function to add the department to the database
  function addDepartment(){
   inquirer.prompt(
     [
@@ -216,5 +220,9 @@ function roleQuestions(){
   })
  }
 
+ //function to quit the command line terminal
+ function quit(){
+  process.exit();
+ }
 
  startPrompt();
