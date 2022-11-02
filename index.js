@@ -1,7 +1,7 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
 const mysql = require('mysql2')
-const table = require('console.table')
+const table = require('console.table');
 
 
   const db = mysql.createConnection(
@@ -16,8 +16,7 @@ const table = require('console.table')
       // console.log(`Connected to the job_db database.`)
   );
 
-
-  function startPrompt(){
+  function startPrompt(){ //initial prompt that starts the program, lets user choose what they want to do
     inquirer.prompt(
       [
         {
@@ -30,7 +29,7 @@ const table = require('console.table')
                    ]
         }
       ]
-      )
+    )
     .then((response) => {
 
       switch(response.choice) {
@@ -56,13 +55,19 @@ const table = require('console.table')
           updateEmpRole();
          break;
         case "Quit":
-          quit();
-    }
-})}
-
-
-
-function addEmp(){
+          console.log("Please press Control + C to Quit. Goodbye!");
+       }
+    })
+  }
+// function addEmp(){
+// //   let empArr = [];
+// //   db.query('SELECT name FROM department;', (err, res) => {
+// //     if (err) throw err
+// //     res.map(function({ name }) {empArr.push(name)})
+// //     empQuestions();
+// //   })
+// // }
+function empQuestions(){
    inquirer.prompt(
     [
       {
@@ -79,8 +84,7 @@ function addEmp(){
         type: 'list',
         name: 'role',
         message: "What is the employee's role?",
-        choices: ['Salesman', 'Sales Lead', 'Software Engineer', 'Accountant', 
-                  'Lawyer', 'Legal Team Lead', 'Lead Engineer', 'Account Manager']
+        choices: empArr
       },
       {
         type: 'list',
@@ -130,7 +134,7 @@ function addEmp(){
   db.query('SELECT name FROM department;', (err, res) => {
     if (err) throw err
     res.map(function({ name }) {deptArr.push(name)})
-    roleQuestions();
+    roleQuestions(); //call the roleQuestions function here to prompt the user regarding role questions
 
   })
 
@@ -151,7 +155,7 @@ function roleQuestions(){
         type: 'list',
         name: 'department',
         message: "What department?",
-        choices: deptArr
+        choices: deptArr  //declared as an empty string in addRole function, stored as a value
       }
     ]
   )
@@ -161,25 +165,25 @@ function roleQuestions(){
     db.query(`SELECT id FROM department WHERE name = "${answer.department}";`, (err, res) => {
       if (err) throw err
       res.map(function({ id }) {deptId.push(id)})
-      id = deptId.toString
+      id = deptId.toString()
+      roleInsert();
 
     })
-    db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${answer.role}", ${answer.salary}, ${id}`)
+    function roleInsert(){
+    db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${answer.role}", ${answer.salary}, ${id})`)
+    setTimeout(startPrompt, 200)  
+    }
   })
 }
- }
+}
 
  function updateEmpRole(){
   inquirer.prompt(
     [
       {
         type: 'list',
-        message: 'Which employee would you like to update?',
-        name: 'selectedEmployee'
-      },
-      {
-
-
+        name: 'selectedEmployee',
+        message: 'Which employee would you like to update?'
       }
     ]
   )
@@ -202,6 +206,7 @@ function roleQuestions(){
     ]
   )
   .then((answer) => {
+    //database query to insert user input into the creation of a new department
     db.query(`INSERT INTO department(name) VALUES ("${answer.newDepartment}")`,(err, res) => {
       if (err) throw err
       console.log(`added ${answer.newDepartment}`)
@@ -211,9 +216,5 @@ function roleQuestions(){
   })
  }
 
-
- function quit(){
-  db.end;
- }
 
  startPrompt();

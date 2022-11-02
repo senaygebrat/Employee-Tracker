@@ -1,45 +1,70 @@
 # Employee-Tracker
 
-SELECT * FROM job_db.department
 
-SELECT department.id, department.name FROM department;
+## About Employee-Tracker
+Command line terminal that accepts user input and allows you interact with the employees, departments, and roles.
 
-SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department ON role.department_id = department.id;
+## Code Snippet
+Adding the new role was a multi-step process. First we create a function addRole(), declare an empty array, and query our database.
+```
+ function addRole(){
+  let deptArr = [];
+  db.query('SELECT name FROM department;', (err, res) => {
+    if (err) throw err
+    res.map(function({ name }) {deptArr.push(name)})
+    roleQuestions();
 
-SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id FROM employee;
+  })
+```
 
-SELECT employee.first_name, employee.last_name FROM employee
+The next function below prompts the user with questions regarding the role.
+```
+function roleQuestions(){
+  inquirer.prompt(
+    [
+      {
+        type: 'input',
+        name: 'role',
+        message: "What is the name of the role?"
+      },
+      {
+        type: 'input',
+        name: 'salary',
+        message: "What is the salary?"
+      },
+      {
+        type: 'list',
+        name: 'department',
+        message: "What department?",
+        choices: deptArr
+      }
+    ]
+  )
+```
 
+Here is the final section that has another database query and inserts the newly declared role. We will initiate the function of startPrompt() to redirect the user to the main menu.
+```
+  .then((answer) => {
+    let deptId = [];
+    let id
+    db.query(`SELECT id FROM department WHERE name = "${answer.department}";`, (err, res) => {
+      if (err) throw err
+      res.map(function({ id }) {deptId.push(id)})
+      id = deptId.toString()
+      roleInsert();
 
+    })
+    function roleInsert(){
+    db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${answer.role}", ${answer.salary}, ${id})`)
+    setTimeout(startPrompt, 200)  
+    }
+  })
+}
+```
 
-SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id FROM employee;
+## Technologies Used
+JavaScript, MySQL
 
-
-++job title, department, and salary
-
-
-
-
-
-
-
-
-
-join/inner join
-select * from employee join role on employee.role_id = role.id
-jenny Minnie 15 president
-
-left join
-select * from employee left join role on employee.role_id = role.id
-john johnson 10 null
-jenny Minnie 15 president
-
-right join
-select * from employee right join role on employee.role_id = role.id
-null         null vice-president
-jenny Minnie 15   president
-
-outer join
-select * from employee outer join role on employee.role_id = role.id
-john johnson 10 null
-null         null vice-president
+## Author Links
+[LinkedIn](https://www.linkedin.com/in/senayg/)
+[Github](https://github.com/senaygebrat)
